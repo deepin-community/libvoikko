@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --with python3,autoreconf
+
+override_dh_auto_configure:
+	dh_auto_configure -- --with-dictionary-path=/usr/lib/voikko:/usr/share/voikko
+
+override_dh_auto_install:
+	dh_auto_install
+	install -m 644 -D python/libvoikko.py debian/python3-libvoikko/usr/lib/python3/dist-packages/libvoikko.py
+	# Remove libtool-like files
+	find . -name '*.la' -exec rm -f {} ';'
+
+override_dh_auto_test:
